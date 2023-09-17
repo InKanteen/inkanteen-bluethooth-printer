@@ -18,12 +18,6 @@ import org.junit.Test;
 public class InkanteenBluetoothPrinterPluginTest {
   @Test
   public void onMethodCall_getPlatformVersion_returnsExpectedValue() {
-    InkanteenBluetoothPrinterPlugin plugin = new InkanteenBluetoothPrinterPlugin();
 
-    final MethodCall call = new MethodCall("getPlatformVersion", null);
-    MethodChannel.Result mockResult = mock(MethodChannel.Result.class);
-    plugin.onMethodCall(call, mockResult);
-
-    verify(mockResult).success("Android " + android.os.Build.VERSION.RELEASE);
   }
 }

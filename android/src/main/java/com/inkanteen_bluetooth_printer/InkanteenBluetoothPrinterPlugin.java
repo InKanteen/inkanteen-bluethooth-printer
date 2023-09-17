@@ -47,6 +47,8 @@ public class InkanteenBluetoothPrinterPlugin implements FlutterPlugin, ActivityA
     private Activity activity;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
 
+    private final Map<String, BluetoothPrinterDevice> connectedDevices = new HashMap<>();
+
     @Override
     public void onAttachedToEngine(@NonNull FlutterPluginBinding flutterPluginBinding) {
         channel = new MethodChannel(flutterPluginBinding.getBinaryMessenger(), "com.inkanteen/bluetooth_printer");
@@ -80,26 +82,23 @@ public class InkanteenBluetoothPrinterPlugin implements FlutterPlugin, ActivityA
                 AsyncTask.execute(new Runnable() {
                     @Override
                     public void run() {
-                        final BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(address);
-                        final BluetoothPrinterDevice device = new BluetoothPrinterDevice(bluetoothDevice);
                         try {
-                            device.connect();
-                            device.write(data, new BluetoothPrinterDevice.WriteResultCallback() {
-                                @Override
-                                public void onFinished() {
-                                    mainHandler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            try {
-                                                device.disconnect();
-                                                result.success(true);
-                                            } catch (IOException ignored) {
-                                            }
-                                        }
-                                    });
-                                }
-                            });
+                            BluetoothPrinterDevice device;
+                            if (connectedDevices.containsKey(address)){
+                                device = connectedDevices.get(address);
+                            } else {
+                                final BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(address);
+                                device = new BluetoothPrinterDevice(bluetoothDevice);
+                                connectedDevices.put(address, device);
+                            }
 
+                            assert device != null;
+                            if (!device.isConnected()){
+                                device.connect();
+                            }
+
+                            device.write(data);
+                            result.success(true);
                         } catch (IOException e) {
                             mainHandler.post(new Runnable() {
                                 @Override
@@ -113,7 +112,6 @@ public class InkanteenBluetoothPrinterPlugin implements FlutterPlugin, ActivityA
                 return;
             }
         }
-
 
         result.notImplemented();
     }
