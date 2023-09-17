@@ -52,7 +52,7 @@ class _MyAppState extends State<MyApp> {
                       title: Text(item.name),
                       subtitle: Text(item.address),
                       onTap: () async {
-                        await item.writeBytes(
+                        item.writeBytes(
                           data: Uint8List.fromList(
                             await testTicket(),
                           ),
