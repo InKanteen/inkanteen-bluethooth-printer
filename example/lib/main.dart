@@ -34,7 +34,7 @@ class _MyAppState extends State<MyApp> {
 
   void loadImg() async {
     String imageUrl =
-        "https://e7.pngegg.com/pngimages/646/324/png-clipart-github-computer-icons-github-logo-monochrome.png";
+        "https://alkindikids.com/wp-content/uploads/print.png";
 
     final response = await http.get(Uri.parse(imageUrl));
     if (response.statusCode == 200) {
@@ -243,7 +243,7 @@ class _MyAppState extends State<MyApp> {
     if (content == "receipt" && image != null) {
       try {
         bytes +=
-            generator.image(img.decodeImage(image!)!, align: PosAlign.center);
+            generator.imageRaster(img.decodeImage(image!)!, align: PosAlign.center);
       } catch (e) {
         bytes += generator.text(e.toString(),
             styles: const PosStyles(align: PosAlign.center));
@@ -252,31 +252,17 @@ class _MyAppState extends State<MyApp> {
     }
 
     bytes += generator.text(content.toUpperCase(),
-        styles: const PosStyles(align: PosAlign.center));
+        styles: const PosStyles(
+          height: PosTextSize.size2,
+          width: PosTextSize.size2,
+          align: PosAlign.center
+        ));
 
     bytes += generator.text(
         'Regular: aA bB cC dD eE fF gG hH iI jJ kK lL mM nN oO pP qQ rR sS tT uU vV wW xX yY zZ');
 
-    bytes += generator.text('Bold text', styles: const PosStyles(bold: true));
-    bytes +=
-        generator.text('Reverse text', styles: const PosStyles(reverse: true));
-    bytes += generator.text('Underlined text',
-        styles: const PosStyles(underline: true), linesAfter: 1);
-    bytes += generator.text('Align left',
-        styles: const PosStyles(align: PosAlign.left));
-    bytes += generator.text('Align center',
-        styles: const PosStyles(align: PosAlign.center));
-    bytes += generator.text('Align right',
-        styles: const PosStyles(align: PosAlign.right), linesAfter: 1);
-
-    bytes += generator.text('Text size 200%',
-        styles: const PosStyles(
-          height: PosTextSize.size2,
-          width: PosTextSize.size2,
-        ));
-
     bytes += generator.feed(1);
-    bytes += generator.cut();
+    // bytes += generator.cut();
     return bytes;
   }
 }
