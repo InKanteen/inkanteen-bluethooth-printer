@@ -4,14 +4,29 @@ import 'package:image/image.dart' as img;
 import 'package:inkanteen_bluetooth_printer/inkanteen_bluetooth_printer_platform_interface.dart';
 
 class BluetoothDevice {
-  final String address;
-  final int type;
-  final String name;
-  const BluetoothDevice({
+  String? address;
+  int? type;
+  String? name;
+
+  BluetoothDevice({
     required this.address,
     required this.type,
     required this.name,
   });
+
+  BluetoothDevice.fromJson(Map<String, dynamic> json) {
+    address = json['address'];
+    type = json['type'];
+    name = json['name'];
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['address'] = address;
+    data['type'] = type;
+    data['name'] = name;
+    return data;
+  }
 
   Future<bool> _write(
     String address, {
@@ -31,7 +46,7 @@ class BluetoothDevice {
     required Uint8List data,
   }) async {
     await _write(
-      address,
+      address ?? "",
       data: data,
     );
   }
