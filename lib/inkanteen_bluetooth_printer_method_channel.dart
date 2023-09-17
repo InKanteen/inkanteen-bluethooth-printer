@@ -9,19 +9,7 @@ class MethodChannelInkanteenBluetoothPrinter
   @visibleForTesting
   final methodChannel = const MethodChannel('com.inkanteen/bluetooth_printer');
 
-  @override
-  Future<bool> connect(String address) async {
-    final result =
-        await methodChannel.invokeMethod<bool>('connect', {'address': address});
-    return result ?? false;
-  }
 
-  @override
-  Future<bool> disconnect(String address) async {
-    final result = await methodChannel
-        .invokeMethod<bool>('disconnect', {'address': address});
-    return result ?? false;
-  }
 
   @override
   Future<List<BluetoothDevice>> getDevices() async {

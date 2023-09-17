@@ -18,17 +18,10 @@ class BluetoothDevice {
     required Uint8List data,
   }) async {
     try {
-      await InkanteenBluetoothPrinterPlatform.instance.connect(
-        address,
-      );
-
-      await InkanteenBluetoothPrinterPlatform.instance.write(
+      return await InkanteenBluetoothPrinterPlatform.instance.write(
         address,
         data: data,
       );
-
-      await InkanteenBluetoothPrinterPlatform.instance.disconnect(address);
-      return true;
     } catch (e) {
       return false;
     }
