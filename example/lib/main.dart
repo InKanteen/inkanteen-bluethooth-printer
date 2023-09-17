@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:inkanteen_bluetooth_printer/inkanteen_bluetooth_printer.dart';
 import 'package:inkanteen_bluetooth_printer_example/device.dart';
+import 'package:http/http.dart' as http;
+import 'package:image/image.dart' as img;
 
 void main() {
   runApp(const MyApp());
@@ -22,10 +24,24 @@ class _MyAppState extends State<MyApp> {
   List<Devices> devices = [];
 
   bool isPrinting = false;
+  Uint8List? image;
 
   @override
   void initState() {
     super.initState();
+    loadImg();
+  }
+
+  void loadImg() async {
+    String imageUrl =
+        "https://e7.pngegg.com/pngimages/646/324/png-clipart-github-computer-icons-github-logo-monochrome.png";
+
+    final response = await http.get(Uri.parse(imageUrl));
+    if (response.statusCode == 200) {
+      image = response.bodyBytes;
+    } else {
+      print('Failed to load image');
+    }
   }
 
   Future<void> readyPrint(String type) async {
@@ -223,6 +239,17 @@ class _MyAppState extends State<MyApp> {
     final profile = await CapabilityProfile.load();
     final generator = Generator(PaperSize.mm58, profile);
     bytes += generator.reset();
+
+    if (content == "receipt" && image != null) {
+      try {
+        bytes +=
+            generator.image(img.decodeImage(image!)!, align: PosAlign.center);
+      } catch (e) {
+        bytes += generator.text(e.toString(),
+            styles: const PosStyles(align: PosAlign.center));
+      }
+      bytes += generator.feed(1);
+    }
 
     bytes += generator.text(content.toUpperCase(),
         styles: const PosStyles(align: PosAlign.center));
