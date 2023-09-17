@@ -9,8 +9,6 @@ class MethodChannelInkanteenBluetoothPrinter
   @visibleForTesting
   final methodChannel = const MethodChannel('com.inkanteen/bluetooth_printer');
 
-
-
   @override
   Future<List<BluetoothDevice>> getDevices() async {
     final result = await methodChannel
@@ -25,6 +23,30 @@ class MethodChannelInkanteenBluetoothPrinter
             )
             .toList() ??
         [];
+  }
+
+  @override
+  Future<List<BluetoothDevice>> getConnectedDevices() async {
+    final result = await methodChannel
+        .invokeListMethod<Map<dynamic, dynamic>>('getConnectedDevices');
+    return result
+            ?.map(
+              (e) => BluetoothDevice(
+                address: e['address'],
+                type: e['type'],
+                name: e['name'],
+              ),
+            )
+            .toList() ??
+        [];
+  }
+
+  @override
+  Future<bool> disconnect(String address) async {
+    final result = await methodChannel.invokeMethod<bool>('disconnect', {
+      'address': address,
+    });
+    return result ?? false;
   }
 
   @override

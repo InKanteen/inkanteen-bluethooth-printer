@@ -32,6 +32,14 @@ abstract class InkanteenBluetoothPrinterPlatform extends PlatformInterface {
     throw UnimplementedError('getBondedDevices() has not been implemented.');
   }
 
+  Future<List<BluetoothDevice>> getConnectedDevices() {
+    throw UnimplementedError('getBondedDevices() has not been implemented.');
+  }
+
+  Future<bool> disconnect(String address) {
+    throw UnimplementedError('disconnect() has not been implemented.');
+  }
+
   Future<bool> write(
     String address, {
     required Uint8List data,
