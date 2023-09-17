@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:inkanteen_bluetooth_printer/bluetooth_device.dart';
+import 'package:inkanteen_bluetooth_printer/src/bluetooth_device.dart';
 
 import 'inkanteen_bluetooth_printer_platform_interface.dart';
 

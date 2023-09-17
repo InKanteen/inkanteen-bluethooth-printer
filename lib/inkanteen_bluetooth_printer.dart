@@ -5,11 +5,11 @@
 // platforms in the `pubspec.yaml` at
 // https://flutter.dev/docs/development/packages-and-plugins/developing-packages#plugin-platforms.
 
-import 'package:inkanteen_bluetooth_printer/bluetooth_device.dart';
+import 'package:inkanteen_bluetooth_printer/src/bluetooth_device.dart';
 
-import 'inkanteen_bluetooth_printer_platform_interface.dart';
+import 'src/inkanteen_bluetooth_printer_platform_interface.dart';
 
-export 'bluetooth_device.dart';
+export 'src/bluetooth_device.dart';
 
 class InkanteenBluetoothPrinter {
   Future<List<BluetoothDevice>> getDevices() {

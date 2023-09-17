@@ -41,10 +41,6 @@ public class BluetoothPrinterDevice {
 
     public void disconnect() throws IOException {
         mThread.interrupt();
-        if (outputStream != null) {
-            outputStream.close();
-        }
-
         if (bluetoothSocket != null) {
             bluetoothSocket.close();
         }
@@ -63,10 +59,7 @@ public class BluetoothPrinterDevice {
         }
 
         outputStream.write(bytes);
-        outputStream.flush();
-
         mThread = new Thread(() -> {
-
             int length = 0;
             byte[] buffer = new byte[1];
             try {
@@ -76,10 +69,9 @@ public class BluetoothPrinterDevice {
                     callback.onFinished();
                     break;
                 }
-            } catch (IOException ignored) {
+            } catch (Exception ignored) {
 
             }
-
         });
         mThread.start();
 
