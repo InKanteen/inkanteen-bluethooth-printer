@@ -248,7 +248,7 @@ class _MyAppState extends State<MyApp> {
           width: PosTextSize.size2,
         ));
 
-    bytes += generator.feed(2);
+    bytes += generator.feed(1);
     bytes += generator.cut();
     return bytes;
   }
