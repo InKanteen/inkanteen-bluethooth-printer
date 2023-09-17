@@ -44,7 +44,7 @@ class _MyAppState extends State<MyApp> {
 
           final startTime = DateTime.now();
 
-          await device.bluetoothDevice?.writeBytes(
+          device.bluetoothDevice?.writeBytes(
             data: Uint8List.fromList(
               await testTicket(type),
             ),
@@ -104,30 +104,30 @@ class _MyAppState extends State<MyApp> {
                         const SizedBox(width: 20),
                         ElevatedButton(
                           onPressed: () async {
-                            await readyPrint("food");
+                            readyPrint("food");
                           },
                           child: const Text('Test Food'),
                         ),
                         const SizedBox(width: 20),
                         ElevatedButton(
                           onPressed: () async {
-                            await readyPrint("drink");
+                            readyPrint("drink");
                           },
                           child: const Text('Test Drink'),
                         ),
                         const SizedBox(width: 20),
                         ElevatedButton(
                           onPressed: () async {
-                            await readyPrint("receipt");
+                            readyPrint("receipt");
                           },
                           child: const Text('Test Receipt'),
                         ),
                         const SizedBox(width: 20),
                         ElevatedButton(
                           onPressed: () async {
-                            await readyPrint("receipt");
-                            await readyPrint("drink");
-                            await readyPrint("food");
+                            readyPrint("receipt");
+                            readyPrint("drink");
+                            readyPrint("food");
                           },
                           child: const Text('Test All'),
                         ),
