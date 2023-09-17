@@ -16,6 +16,21 @@ class InkanteenBluetoothPrinter {
     return InkanteenBluetoothPrinterPlatform.instance.getDevices();
   }
 
+  Future<List<BluetoothDevice>> getConnectedDevices() {
+    return InkanteenBluetoothPrinterPlatform.instance.getConnectedDevices();
+  }
+
+  Future<bool> disconnect(String address) {
+    return InkanteenBluetoothPrinterPlatform.instance.disconnect(address);
+  }
+
+  Future<void> disconnectAllDevices() async {
+    final connected = await getConnectedDevices();
+    for (var device in connected) {
+      await disconnect(device.address);
+    }
+  }
+
   Future<BluetoothDevice?> getDevice(String address) async {
     final devices =
         await InkanteenBluetoothPrinterPlatform.instance.getDevices();

@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.UUID;
 
 public class BluetoothPrinterDevice {
-    private final BluetoothDevice bluetoothDevice;
+    public final BluetoothDevice bluetoothDevice;
     private BluetoothSocket bluetoothSocket;
 
     public BluetoothPrinterDevice(BluetoothDevice device) {
