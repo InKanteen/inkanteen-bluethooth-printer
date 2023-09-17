@@ -2,17 +2,32 @@
 
 A new Flutter plugin project.
 
-## Getting Started
+## Usage
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+Add `inkanteen_bluetooth_printer` package to your pubspec.yaml
+```yaml
+  dependencies:
+    # other dependencies
 
-For help getting started with Flutter development, view the
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+    inkanteen_bluetooth_printer:
+      path: your/path
 
-The plugin project was generated without specifying the `--platforms` flag, no platforms are currently supported.
-To add platforms, run `flutter create -t plugin --platforms <platforms> .` in this directory.
-You can also find a detailed instruction on how to add platforms in the `pubspec.yaml` at https://flutter.dev/docs/development/packages-and-plugins/developing-packages#plugin-platforms.
+```
+
+Get Paired Devices
+```dart
+final manager = InkanteenBluetoothPrinter();
+
+Future<void> getDevices() async {
+    final devices = await manager.getDevices();
+    /// show devices data to the UI using ListView.builder
+}
+```
+
+Print Receipt
+```dart
+Future<void> print(BluetoothDevice device) async {
+    final bytes = await _generateESCPOSCommand();
+    await device.writeBytes(bytes);
+}
+```
