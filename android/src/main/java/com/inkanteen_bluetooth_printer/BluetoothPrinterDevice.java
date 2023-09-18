@@ -50,14 +50,16 @@ public class BluetoothPrinterDevice {
                     // if device is disconnected, length will be -1
                     // or will throws an IOException
                     while ((length = inputStream.read(buffer)) != -1) {
-                        Log.d("BLUETOOTH", Arrays.toString(buffer));
-                        Log.d("BUFFER LENGTH", String.valueOf(length));
+                        Log.d("BLUETOOTH READ BUFFER", Arrays.toString(buffer));
+                        Log.d("BLUETOOTH BUFFER LENGTH", String.valueOf(length));
                     }
                 }catch (IOException ignored){
+
                 }
 
                 // mark the connection is ended, so we should disconnect to remove the resources
                 try {
+                    Log.d("BLUETOOTH DISCONNECTED", bluetoothDevice.getAddress());
                     disconnect();
                 }catch (IOException ignored){
                 }
