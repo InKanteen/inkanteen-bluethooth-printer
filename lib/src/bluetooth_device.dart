@@ -38,6 +38,7 @@ class BluetoothDevice {
         data: data,
       );
     } catch (e) {
+      debugPrint(e.toString());
       return false;
     }
   }
