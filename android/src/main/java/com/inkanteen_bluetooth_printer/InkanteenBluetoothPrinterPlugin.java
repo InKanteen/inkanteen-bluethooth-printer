@@ -139,20 +139,22 @@ public class InkanteenBluetoothPrinterPlugin implements FlutterPlugin, ActivityA
                                 } else {
                                     final BluetoothDevice bluetoothDevice = bluetoothAdapter.getRemoteDevice(address);
                                     device = new BluetoothPrinterDevice(bluetoothDevice);
-                                    device.setDisconnectListener(() -> {
-                                        synchronized (connectedDevices){
-                                            connectedDevices.remove(address);
-                                        }
-                                    });
+                                    if (device.connect()) {
+                                        device.setDisconnectListener(() -> {
+                                            synchronized (connectedDevices) {
+                                                connectedDevices.remove(address);
+                                            }
+                                        });
 
-                                    connectedDevices.put(address, device);
+                                        connectedDevices.put(address, device);
+                                    } else {
+                                        throw new IOException("failed to connect "+ address);
+                                    }
                                 }
                             }
 
                             assert device != null;
-                            if (!device.isConnected()){
-                                device.connect();
-                            }
+                            assert device.isConnected();
 
                             device.write(data);
                             result.success(true);
