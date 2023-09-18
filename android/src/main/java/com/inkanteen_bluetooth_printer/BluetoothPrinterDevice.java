@@ -19,6 +19,12 @@ public class BluetoothPrinterDevice {
     }
 
     private OutputStream outputStream;
+    private InputStream inputStream;
+    private Thread mThread;
+    private IBluetoothPrinterDisconnectListener mDisconnectListener;
+    public void setDisconnectListener(IBluetoothPrinterDisconnectListener listener){
+        mDisconnectListener = listener;
+    }
 
     public boolean isConnected() {
         if (bluetoothSocket == null) {
@@ -33,6 +39,31 @@ public class BluetoothPrinterDevice {
         bluetoothSocket = bluetoothDevice.createRfcommSocketToServiceRecord(uuid);
         bluetoothSocket.connect();
         outputStream = bluetoothSocket.getOutputStream();
+        inputStream = bluetoothSocket.getInputStream();
+        mThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    int length = 0;
+                    byte[] buffer = new byte[1];
+
+                    // if device is disconnected, length will be -1
+                    // or will throws an IOException
+                    while ((length = inputStream.read(buffer)) != -1) {
+                        Log.d("BLUETOOTH", Arrays.toString(buffer));
+                        Log.d("BUFFER LENGTH", String.valueOf(length));
+                    }
+                }catch (IOException ignored){
+                }
+
+                // mark the connection is ended, so we should disconnect to remove the resources
+                try {
+                    disconnect();
+                }catch (IOException ignored){
+                }
+            }
+        });
+        mThread.start();
         return bluetoothSocket.isConnected();
     }
 
@@ -43,6 +74,10 @@ public class BluetoothPrinterDevice {
 
         outputStream = null;
         bluetoothSocket = null;
+
+        if (mDisconnectListener != null){
+            mDisconnectListener.onDisconnected();
+        }
     }
 
 
@@ -53,5 +88,9 @@ public class BluetoothPrinterDevice {
 
         outputStream.write(bytes);
         outputStream.flush();
+    }
+
+    public static interface IBluetoothPrinterDisconnectListener {
+        void onDisconnected();
     }
 }
