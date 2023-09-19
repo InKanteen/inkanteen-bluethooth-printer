@@ -128,6 +128,12 @@ public class InkanteenBluetoothPrinterPlugin implements FlutterPlugin, ActivityA
             case "write": {
                 final String address = call.argument("address");
                 final byte[] data = call.argument("data");
+                
+                if (address == null) {
+                    result.error("address_null", "The 'address' argument is null", null);
+                    return;
+                }
+                
                 AsyncTask.execute(new Runnable() {
                     @Override
                     public void run() {
