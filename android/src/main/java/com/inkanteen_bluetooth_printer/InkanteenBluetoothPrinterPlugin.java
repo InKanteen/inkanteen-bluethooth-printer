@@ -75,7 +75,7 @@ public class InkanteenBluetoothPrinterPlugin implements FlutterPlugin, ActivityA
                 getDevices(result);
                 return;
             }
-            
+
             case "getConnectedDevices":{
                 final List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
                 synchronized (connectedDevices) {
@@ -85,6 +85,7 @@ public class InkanteenBluetoothPrinterPlugin implements FlutterPlugin, ActivityA
                     }
                 }
                 result.success(list);
+                return;
             }
 
             case "disconnect": {
@@ -123,6 +124,7 @@ public class InkanteenBluetoothPrinterPlugin implements FlutterPlugin, ActivityA
                         }
                     }
                 });
+                return;
             }
 
             case "write": {
