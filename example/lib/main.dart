@@ -7,6 +7,7 @@ import 'package:inkanteen_bluetooth_printer/inkanteen_bluetooth_printer.dart';
 import 'package:inkanteen_bluetooth_printer_example/device.dart';
 import 'package:http/http.dart' as http;
 import 'package:image/image.dart' as img;
+import 'package:flutter/services.dart';
 
 void main() {
   runApp(const MyApp());
@@ -60,11 +61,24 @@ class _MyAppState extends State<MyApp> {
 
           final startTime = DateTime.now();
 
-         await device.bluetoothDevice?.writeBytes(
+        try {
+           await device.bluetoothDevice?.writeBytes(
             data: Uint8List.fromList(
               await testTicket(type),
             ),
           );
+          print('++++++++');
+          print('success');
+          print('++++++++');
+        } on PlatformException catch (e) {
+              print('=======');
+              print("Error ${e}");
+              print('=======');
+        } catch (e) {
+              print('=======');
+              print("Error ${e}");
+              print('=======');
+        }
 
           final endTime = DateTime.now();
           final duration = endTime.difference(startTime);
