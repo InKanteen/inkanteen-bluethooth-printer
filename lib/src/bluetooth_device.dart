@@ -1,5 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:async';
 import 'dart:collection';
-import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
 import 'package:inkanteen_bluetooth_printer/src/inkanteen_bluetooth_printer_platform_interface.dart';
@@ -27,47 +28,64 @@ class BluetoothDevice {
     return data;
   }
 
-  final _queue = Queue<Uint8List>();
+  final _queue = Queue<_Task>();
   Future<bool> _write(
     String address, {
     required Uint8List data,
-  }) async {
-    try {
-      return await InkanteenBluetoothPrinterPlatform.instance.write(
-        address,
-        data: data,
-      );
-    } catch (e) {
-      debugPrint(e.toString());
-      return false;
-    }
+  }) {
+    return InkanteenBluetoothPrinterPlatform.instance.write(
+      address,
+      data: data,
+    );
   }
 
   Future<void> _doPrint() async {
-    if (_queue.isNotEmpty) {
-      final data = _queue.removeFirst();
-      await _write(
-        address,
-        data: data,
-      );
+    if (_isPrinting) {
+      return;
+    }
 
-      await _doPrint();
+    _isPrinting = true;
+    if (_queue.isNotEmpty) {
+      final task = _queue.removeFirst();
+      final data = task.data;
+      try {
+        await _write(
+          address,
+          data: data,
+        );
+
+        if (!task.completer.isCompleted) {
+          task.completer.complete(true);
+        }
+
+        _doPrint();
+      } catch (e) {
+        if (!task.completer.isCompleted) {
+          task.completer.completeError(e);
+        }
+      }
     } else {
       _isPrinting = false;
     }
   }
 
   bool _isPrinting = false;
-  Future<void> writeBytes({
+  Future<bool> writeBytes({
     required Uint8List data,
   }) async {
-    _queue.add(data);
+    final task = _Task(data: data);
+    _queue.add(task);
 
-    if (_isPrinting) {
-      return;
-    }
-
-    _isPrinting = true;
     _doPrint();
+
+    return task.completer.future;
   }
+}
+
+class _Task {
+  final Uint8List data;
+  _Task({
+    required this.data,
+  });
+  final completer = Completer<bool>();
 }
