@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
@@ -28,46 +29,56 @@ class BluetoothDevice {
   }
 
   final _queue = Queue<Uint8List>();
-  Future<bool> _write(
+  final Completer<void> _completer = Completer<void>();
+  bool _isPrinting = false;
+
+  Future<void> _write(
     String address, {
     required Uint8List data,
   }) async {
     try {
-      return await InkanteenBluetoothPrinterPlatform.instance.write(
+      await InkanteenBluetoothPrinterPlatform.instance.write(
         address,
         data: data,
       );
     } catch (e) {
       debugPrint(e.toString());
-      return false;
+      throw e; // Rethrow the exception to propagate it.
     }
   }
 
   Future<void> _doPrint() async {
     if (_queue.isNotEmpty) {
       final data = _queue.removeFirst();
-      await _write(
-        address,
-        data: data,
-      );
+      try {
+        await _write(
+          address,
+          data: data,
+        );
+      } catch (error) {
+        _isPrinting = false;
+        _completer.completeError(error);
+        return;
+      }
 
       await _doPrint();
     } else {
       _isPrinting = false;
+      _completer.complete();
     }
   }
 
-  bool _isPrinting = false;
   Future<void> writeBytes({
     required Uint8List data,
   }) async {
     _queue.add(data);
 
     if (_isPrinting) {
+      await _completer.future;
       return;
     }
 
     _isPrinting = true;
-    _doPrint();
+    await _doPrint();
   }
 }

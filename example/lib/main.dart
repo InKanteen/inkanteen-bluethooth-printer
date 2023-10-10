@@ -60,7 +60,7 @@ class _MyAppState extends State<MyApp> {
 
           final startTime = DateTime.now();
 
-          device.bluetoothDevice?.writeBytes(
+         await device.bluetoothDevice?.writeBytes(
             data: Uint8List.fromList(
               await testTicket(type),
             ),
