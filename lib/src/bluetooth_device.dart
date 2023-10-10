@@ -1,6 +1,6 @@
-import 'dart:collection';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:async';
-import 'dart:typed_data';
+import 'dart:collection';
 
 import 'package:flutter/foundation.dart';
 import 'package:inkanteen_bluetooth_printer/src/inkanteen_bluetooth_printer_platform_interface.dart';
@@ -28,57 +28,65 @@ class BluetoothDevice {
     return data;
   }
 
-  final _queue = Queue<Uint8List>();
-  final Completer<void> _completer = Completer<void>();
-  bool _isPrinting = false;
-
-  Future<void> _write(
+  final _queue = Queue<_Task>();
+  Future<bool> _write(
     String address, {
     required Uint8List data,
-  }) async {
-    try {
-      await InkanteenBluetoothPrinterPlatform.instance.write(
-        address,
-        data: data,
-      );
-    } catch (e) {
-      debugPrint(e.toString());
-      throw e; // Rethrow the exception to propagate it.
-    }
+  }) {
+    return InkanteenBluetoothPrinterPlatform.instance.write(
+      address,
+      data: data,
+    );
   }
 
   Future<void> _doPrint() async {
+    if (_isPrinting) {
+      return;
+    }
+
+    _isPrinting = true;
     if (_queue.isNotEmpty) {
-      final data = _queue.removeFirst();
+      final task = _queue.removeFirst();
+      final data = task.data;
       try {
         await _write(
           address,
           data: data,
         );
-      } catch (error) {
-        _isPrinting = false;
-        _completer.completeError(error);
-        return;
-      }
 
-      await _doPrint();
+        if (!task.completer.isCompleted) {
+          task.completer.complete(true);
+        }
+
+        _doPrint();
+      } catch (e) {
+        if (!task.completer.isCompleted) {
+          task.completer.completeError(e);
+        }
+      }
     } else {
       _isPrinting = false;
       _completer.complete();
     }
   }
 
-  Future<void> writeBytes({
+  bool _isPrinting = false;
+  Future<bool> writeBytes({
     required Uint8List data,
   }) async {
-    _queue.add(data);
+    final task = _Task(data: data);
+    _queue.add(task);
 
-    if (_isPrinting) {
-      await _completer.future;
-      return;
-    }
+    _doPrint();
 
-    _isPrinting = true;
-    await _doPrint();
+    return task.completer.future;
   }
+}
+
+class _Task {
+  final Uint8List data;
+  _Task({
+    required this.data,
+  });
+  final completer = Completer<bool>();
 }
