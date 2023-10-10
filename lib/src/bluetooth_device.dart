@@ -66,7 +66,6 @@ class BluetoothDevice {
       }
     } else {
       _isPrinting = false;
-      _completer.complete();
     }
   }
 
