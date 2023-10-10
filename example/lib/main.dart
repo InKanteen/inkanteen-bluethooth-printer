@@ -61,24 +61,18 @@ class _MyAppState extends State<MyApp> {
 
           final startTime = DateTime.now();
 
-        try {
-           await device.bluetoothDevice?.writeBytes(
-            data: Uint8List.fromList(
-              await testTicket(type),
-            ),
-          );
-          print('++++++++');
-          print('success');
-          print('++++++++');
-        } on PlatformException catch (e) {
-              print('=======');
+          try {
+            await device.bluetoothDevice?.writeBytes(
+              data: Uint8List.fromList(
+                await testTicket(type),
+              ),
+            );
+            print('success');
+          } on PlatformException catch (e) {
               print("Error ${e}");
-              print('=======');
-        } catch (e) {
-              print('=======');
+          } catch (e) {
               print("Error ${e}");
-              print('=======');
-        }
+          }
 
           final endTime = DateTime.now();
           final duration = endTime.difference(startTime);
