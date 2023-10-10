@@ -57,12 +57,13 @@ class BluetoothDevice {
         if (!task.completer.isCompleted) {
           task.completer.complete(true);
         }
-
-        _doPrint();
       } catch (e) {
         if (!task.completer.isCompleted) {
           task.completer.completeError(e);
         }
+      } finally {
+        _isPrinting = false;
+        _doPrint();
       }
     } else {
       _isPrinting = false;
